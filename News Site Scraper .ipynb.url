@@ -1,2 +1,31 @@
-[InternetShortcut]
-URL=http://localhost:8889/notebooks/website/News%20Site%20Scraper%20.ipynb
+#libraries 
+import newspaper 
+import json
+
+#newspaper crawler
+cnn_newspaper = newspaper.build('https://www.cnn.com/')
+
+#data array
+data_array = []
+
+count = 0 
+
+#for loopfor article extraction, download and parsing followed by 50 count loop
+for article in cnn_newspaper.articles:
+    if count == 50:
+        break
+    try:
+        article.download()
+        article.parse()
+        
+    except:
+        continue
+# json append array for later dump     
+    data_array.append([('DATE: ', article.publish_date), ('TITLE:', article.title), ('TEXT', article.text), ('URL', article.url) ])
+    
+    count += 1 
+with open('CNN_Crawler.json', 'w') as f:
+    json.dump(data_array, f, default=str, indent=4)
+#^ dumping the data_array in to a JSON file    
+
+print(count) 
